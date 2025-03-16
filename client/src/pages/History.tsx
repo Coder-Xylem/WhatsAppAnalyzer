@@ -41,9 +41,28 @@ const History: React.FC = () => {
 
   return (
     <div className="container mx-auto py-8">
+      <div className="flex items-center justify-between mb-6">
+        <div className="flex items-center space-x-4">
+          <Button 
+            variant="outline" 
+            size="icon"
+            onClick={() => window.history.back()}
+          >
+            <ArrowLeft className="h-4 w-4" />
+          </Button>
+          <h1 className="text-3xl font-bold tracking-tight">Analysis History</h1>
+        </div>
+        <Button 
+          variant="outline"
+          onClick={() => window.history.forward()}
+        >
+          <ArrowRight className="h-4 w-4 mr-2" />
+          Forward
+        </Button>
+      </div>
       <Card>
         <CardHeader>
-          <CardTitle>Analysis History</CardTitle>
+          <CardTitle>Past Analyses</CardTitle>
         </CardHeader>
         <CardContent>
           <Table>

@@ -9,6 +9,7 @@ import Landing from '@/pages/Landing';
 import Dashboard from '@/pages/Dashboard';
 import AuthPage from '@/pages/auth-page';
 import History from '@/pages/History';
+import Help from '@/pages/Help';
 import { ProtectedRoute } from './lib/protected-route';
 
 function Router() {
@@ -17,6 +18,7 @@ function Router() {
       <Route path="/" component={Landing} />
       <ProtectedRoute path="/dashboard" component={Dashboard} />
       <ProtectedRoute path="/history" component={History} />
+      <Route path="/help" component={Help} />
       <Route path="/auth" component={AuthPage} />
       <Route component={NotFound} />
     </Switch>
