@@ -19,6 +19,7 @@ const FileUpload: React.FC<FileUploadProps> = ({ onAnalysisComplete, onAnalysisS
   const { toast } = useToast();
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    event.preventDefault();
     const files = event.target.files;
     
     if (files && files.length > 0) {
