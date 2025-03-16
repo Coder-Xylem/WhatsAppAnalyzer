@@ -127,13 +127,17 @@ const FileUpload: React.FC<FileUploadProps> = ({ onAnalysisComplete, onAnalysisS
       onAnalysisComplete(analysisData);
     } catch (error) {
       console.error('Upload error:', error);
+      
+      // Set isUploading to false and reset progress
+      setIsUploading(false);
+      setUploadProgress(0);
+      
+      // Display error message
       toast({
         title: 'Upload failed',
         description: error instanceof Error ? error.message : 'Failed to upload and analyze file.',
         variant: 'destructive',
       });
-    } finally {
-      setIsUploading(false);
     }
   };
 

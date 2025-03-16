@@ -1,29 +1,21 @@
-import { getToken } from './auth';
-import { apiRequest, queryClient } from './queryClient';
+import { queryClient } from './queryClient';
 import { Analysis, AnalysisSummary } from '@/types';
 
 // Upload and analyze WhatsApp chat file
 export async function uploadAndAnalyzeChat(file: File): Promise<Analysis> {
-  const token = await getToken();
-  
-  if (!token) {
-    throw new Error("Not authenticated");
-  }
-  
   const formData = new FormData();
   formData.append('file', file);
   
+  // Set credentials: 'include' to send cookies (for session-based auth)
   const response = await fetch('/api/upload', {
     method: 'POST',
     body: formData,
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
+    credentials: 'include', // Important for sending session cookies
   });
   
   if (!response.ok) {
-    const errorText = await response.text();
-    throw new Error(errorText || 'Failed to upload and analyze file');
+    const errorData = await response.json().catch(() => ({ message: 'Failed to upload and analyze file' }));
+    throw new Error(errorData.message || 'Failed to upload and analyze file');
   }
   
   const result = await response.json();
@@ -36,21 +28,13 @@ export async function uploadAndAnalyzeChat(file: File): Promise<Analysis> {
 
 // Get all analyses
 export async function getAnalyses(): Promise<AnalysisSummary[]> {
-  const token = await getToken();
-  
-  if (!token) {
-    throw new Error("Not authenticated");
-  }
-  
   const response = await fetch('/api/analyses', {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
+    credentials: 'include', // Important for sending session cookies
   });
   
   if (!response.ok) {
-    const errorText = await response.text();
-    throw new Error(errorText || 'Failed to fetch analyses');
+    const errorData = await response.json().catch(() => ({ message: 'Failed to fetch analyses' }));
+    throw new Error(errorData.message || 'Failed to fetch analyses');
   }
   
   return response.json();
@@ -58,21 +42,13 @@ export async function getAnalyses(): Promise<AnalysisSummary[]> {
 
 // Get specific analysis
 export async function getAnalysis(id: number): Promise<Analysis> {
-  const token = await getToken();
-  
-  if (!token) {
-    throw new Error("Not authenticated");
-  }
-  
   const response = await fetch(`/api/analyses/${id}`, {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
+    credentials: 'include', // Important for sending session cookies
   });
   
   if (!response.ok) {
-    const errorText = await response.text();
-    throw new Error(errorText || 'Failed to fetch analysis');
+    const errorData = await response.json().catch(() => ({ message: 'Failed to fetch analysis' }));
+    throw new Error(errorData.message || 'Failed to fetch analysis');
   }
   
   return response.json();
@@ -80,21 +56,18 @@ export async function getAnalysis(id: number): Promise<Analysis> {
 
 // Download PDF report
 export function downloadPdfReport(id: number): void {
-  getToken().then(token => {
-    if (!token) {
-      throw new Error("Not authenticated");
-    }
-    
+  try {
     // Create a hidden anchor and simulate click to download the file
     const a = document.createElement('a');
     a.style.display = 'none';
-    a.href = `/api/analyses/${id}/pdf?token=${token}`;
+    a.href = `/api/analyses/${id}/pdf`;
     a.download = `chat-analysis-${id}.pdf`;
     
+    // The credentials will be included automatically by the browser
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
-  }).catch(error => {
+  } catch (error) {
     console.error('Error downloading PDF:', error);
-  });
+  }
 }
