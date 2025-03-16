@@ -162,12 +162,23 @@ function extractCommonWords(messages: Message[]): CommonWord[] {
     "before", "under", "around", "among"
   ]);
   
+  // Add WhatsApp placeholder words to the stop list
+  const whatsAppPlaceholders = new Set([
+    "omitted", "media", "deleted", "message", "audio", "video", "image", "sticker",
+    "this", "was", "you", "your", "have", "has", "had", "will", "would", "i'm", "im"
+  ]);
+  
   messages.forEach(message => {
     const words = tokenizer.tokenize(message.content.toLowerCase()) || [];
     
     words.forEach(word => {
-      // Filter out short words, numbers, and stop words
-      if (word.length > 2 && !stopWords.has(word) && !/^\d+$/.test(word)) {
+      // Filter out short words, numbers, stop words, and WhatsApp placeholders
+      if (word.length > 2 && 
+          !stopWords.has(word) && 
+          !whatsAppPlaceholders.has(word) && 
+          !/^\d+$/.test(word) &&
+          !message.content.toLowerCase().includes('media omitted') &&
+          !message.content.toLowerCase().includes('message deleted')) {
         wordCounts[word] = (wordCounts[word] || 0) + 1;
       }
     });

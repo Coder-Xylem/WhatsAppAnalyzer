@@ -68,10 +68,15 @@ const ParticipantActivity: React.FC<ParticipantActivityProps> = ({ participants 
       const ctx = chartRef.current.getContext('2d');
       
       if (ctx) {
+        // Sort participants by number of messages (descending) and take top 15
+        const topParticipants = [...participants]
+          .sort((a, b) => b.messages - a.messages)
+          .slice(0, 15);
+
         // Prepare data for the chart
-        const labels = participants.map(p => p.name);
-        const messageData = participants.map(p => p.messages);
-        const backgroundColors = participants.map(p => getColorFromName(p.name));
+        const labels = topParticipants.map(p => p.name);
+        const messageData = topParticipants.map(p => p.messages);
+        const backgroundColors = topParticipants.map(p => getColorFromName(p.name));
         const borderColors = backgroundColors.map(color => color.replace('0.8', '1'));
 
         // Create new chart
@@ -92,6 +97,16 @@ const ParticipantActivity: React.FC<ParticipantActivityProps> = ({ participants 
             plugins: {
               legend: {
                 display: false
+              },
+              tooltip: {
+                callbacks: {
+                  title: (tooltipItems) => {
+                    return tooltipItems[0].label;
+                  },
+                  label: (tooltipItem) => {
+                    return `Messages: ${tooltipItem.raw}`;
+                  }
+                }
               }
             },
             scales: {
