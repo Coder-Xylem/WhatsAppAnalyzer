@@ -1,4 +1,9 @@
 import { users, type User, type InsertUser, analyses, type Analysis, type InsertAnalysis } from "@shared/schema";
+import { drizzle } from "drizzle-orm/postgres-js";
+import { eq } from "drizzle-orm";
+import postgres from "postgres";
+import session from "express-session";
+import connectPg from "connect-pg-simple";
 
 export interface IStorage {
   // User methods
@@ -12,12 +17,101 @@ export interface IStorage {
   createAnalysis(analysis: InsertAnalysis): Promise<Analysis>;
   
   // Session store for express-session
-  sessionStore: any;
+  sessionStore: session.Store;
 }
 
-import createMemoryStore from "memorystore";
-import session from "express-session";
+// Database setup
+const connectionString = process.env.DATABASE_URL;
+const client = postgres(connectionString!);
+const db = drizzle(client);
 
+const PostgresSessionStore = connectPg(session);
+
+export class PostgresStorage implements IStorage {
+  public sessionStore: session.Store;
+
+  constructor() {
+    this.sessionStore = new PostgresSessionStore({
+      conObject: {
+        connectionString: process.env.DATABASE_URL,
+      },
+      createTableIfMissing: true,
+    });
+  }
+
+  // User methods
+  async getUser(id: number): Promise<User | undefined> {
+    try {
+      const result = await db.select().from(users).where(eq(users.id, id));
+      return result[0];
+    } catch (error) {
+      console.error('Error getting user:', error);
+      return undefined;
+    }
+  }
+
+  async getUserByUsername(username: string): Promise<User | undefined> {
+    try {
+      const result = await db.select().from(users).where(eq(users.username, username));
+      return result[0];
+    } catch (error) {
+      console.error('Error getting user by username:', error);
+      return undefined;
+    }
+  }
+
+  async createUser(insertUser: InsertUser): Promise<User> {
+    try {
+      const result = await db.insert(users).values({
+        ...insertUser,
+        name: insertUser.name || null,
+        picture: insertUser.picture || null
+      }).returning();
+      
+      return result[0];
+    } catch (error) {
+      console.error('Error creating user:', error);
+      throw error;
+    }
+  }
+
+  // Analysis methods
+  async getAnalysis(id: number): Promise<Analysis | undefined> {
+    try {
+      const result = await db.select().from(analyses).where(eq(analyses.id, id));
+      return result[0];
+    } catch (error) {
+      console.error('Error getting analysis:', error);
+      return undefined;
+    }
+  }
+
+  async getAnalysesByUserId(userId: number): Promise<Analysis[]> {
+    try {
+      return await db.select().from(analyses).where(eq(analyses.userId, userId));
+    } catch (error) {
+      console.error('Error getting analyses by user ID:', error);
+      return [];
+    }
+  }
+
+  async createAnalysis(insertAnalysis: InsertAnalysis): Promise<Analysis> {
+    try {
+      const result = await db.insert(analyses).values({
+        ...insertAnalysis,
+        uploadDate: insertAnalysis.uploadDate || new Date()
+      }).returning();
+      
+      return result[0];
+    } catch (error) {
+      console.error('Error creating analysis:', error);
+      throw error;
+    }
+  }
+}
+
+// Fall back to memory storage if database URL is not available
+import createMemoryStore from "memorystore";
 const MemoryStore = createMemoryStore(session);
 
 export class MemStorage implements IStorage {
@@ -83,4 +177,7 @@ export class MemStorage implements IStorage {
   }
 }
 
-export const storage = new MemStorage();
+// Create the appropriate storage implementation based on environment
+export const storage = process.env.DATABASE_URL 
+  ? new PostgresStorage() 
+  : new MemStorage();
