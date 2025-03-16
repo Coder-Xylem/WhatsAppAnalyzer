@@ -1,5 +1,5 @@
 
-import React from 'react';
+import * as React from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { format } from 'date-fns';
 import {
@@ -13,8 +13,16 @@ import {
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Loader2 } from 'lucide-react';
 
-export default function History() {
-  const { data: analyses, isLoading } = useQuery({
+interface Analysis {
+  id: string;
+  fileName: string;
+  uploadDate: string;
+  fileSize: number;
+  totalMessages: number;
+}
+
+const History: React.FC = () => {
+  const { data: analyses, isLoading } = useQuery<Analysis[]>({
     queryKey: ['analyses'],
     queryFn: async () => {
       const response = await fetch('/api/analyses');
@@ -48,7 +56,7 @@ export default function History() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {analyses?.map((analysis: any) => (
+              {analyses?.map((analysis) => (
                 <TableRow key={analysis.id}>
                   <TableCell>{analysis.fileName}</TableCell>
                   <TableCell>{format(new Date(analysis.uploadDate), 'PPP')}</TableCell>
@@ -62,4 +70,6 @@ export default function History() {
       </Card>
     </div>
   );
-}
+};
+
+export default History;
