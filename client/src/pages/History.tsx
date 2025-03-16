@@ -2,6 +2,8 @@
 import * as React from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { format } from 'date-fns';
+import { Button } from "@/components/ui/button";
+import { ArrowLeft, ArrowRight } from "lucide-react";
 import {
   Table,
   TableBody,
