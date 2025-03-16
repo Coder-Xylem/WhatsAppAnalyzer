@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { useAuth } from '@/components/auth/AuthProvider';
-import { Link } from 'wouter';
+import { useAuth } from '@/hooks/use-auth';
+import { Link, useLocation } from 'wouter';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
 import { 
@@ -29,7 +29,8 @@ import {
 } from '@/components/ui/card';
 
 const Landing: React.FC = () => {
-  const { login } = useAuth();
+  const { user } = useAuth();
+  const [, setLocation] = useLocation();
 
   return (
     <div className="flex flex-col min-h-screen bg-white">
@@ -71,7 +72,7 @@ const Landing: React.FC = () => {
               <div className="mt-10 flex justify-center">
                 <div className="rounded-md shadow">
                   <Button 
-                    onClick={() => login()} 
+                    onClick={() => setLocation('/auth')} 
                     className="w-full flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-white bg-primary hover:bg-blue-700 md:py-4 md:text-lg md:px-10"
                   >
                     Get started
@@ -281,7 +282,7 @@ const Landing: React.FC = () => {
               
               <div className="mt-12 text-center">
                 <Button 
-                  onClick={() => login()} 
+                  onClick={() => setLocation('/auth')} 
                   className="inline-flex items-center px-6 py-3 text-base font-medium rounded-md shadow-sm text-white bg-primary hover:bg-blue-700"
                 >
                   Start Analyzing <ChevronRight className="ml-2 h-5 w-5" />

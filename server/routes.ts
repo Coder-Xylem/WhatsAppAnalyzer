@@ -1,12 +1,20 @@
-import type { Express } from "express";
+import type { Express, Request, Response, NextFunction } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import multer from "multer";
-import { checkJwt, ensureUserInDb } from "./auth";
+import { setupAuth } from "./auth";
 import { analyzeChat } from "./nlp";
 import { generatePDF } from "./pdf";
 import { insertAnalysisSchema } from "@shared/schema";
 import { z } from "zod";
+
+// Middleware to ensure user is authenticated
+function ensureAuthenticated(req: Request, res: Response, next: NextFunction) {
+  if (req.isAuthenticated()) {
+    return next();
+  }
+  res.status(401).json({ message: "Unauthorized" });
+}
 
 // Configure multer for memory storage
 const upload = multer({
@@ -25,19 +33,21 @@ const upload = multer({
 });
 
 export async function registerRoutes(app: Express): Promise<Server> {
-  // Set up API routes with Auth0 authentication
-  const apiRouter = app.route("/api");
+  // Set up authentication routes
+  setupAuth(app);
   
   // Check authentication status
-  app.get("/api/auth/status", checkJwt, ensureUserInDb, (req, res) => {
-    res.json({ isAuthenticated: true, user: (req as any).user });
+  app.get("/api/auth/status", (req, res) => {
+    res.json({ 
+      isAuthenticated: req.isAuthenticated(),
+      user: req.isAuthenticated() ? req.user : null
+    });
   });
   
   // Upload WhatsApp chat file and analyze
   app.post(
     "/api/upload",
-    checkJwt,
-    ensureUserInDb,
+    ensureAuthenticated,
     upload.single("file"),
     async (req, res) => {
       try {
@@ -45,7 +55,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           return res.status(400).json({ message: "No file uploaded" });
         }
         
-        const user = (req as any).user;
+        const user = req.user;
         const file = req.file;
         const chatText = file.buffer.toString("utf-8");
         
@@ -83,9 +93,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   );
   
   // Get user's analysis history
-  app.get("/api/analyses", checkJwt, ensureUserInDb, async (req, res) => {
+  app.get("/api/analyses", ensureAuthenticated, async (req, res) => {
     try {
-      const user = (req as any).user;
+      const user = req.user;
       const analyses = await storage.getAnalysesByUserId(user.id);
       
       // Return only the necessary data for the list view
@@ -105,10 +115,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
   
   // Get a specific analysis
-  app.get("/api/analyses/:id", checkJwt, ensureUserInDb, async (req, res) => {
+  app.get("/api/analyses/:id", ensureAuthenticated, async (req, res) => {
     try {
       const analysisId = parseInt(req.params.id);
-      const user = (req as any).user;
+      const user = req.user;
       
       if (isNaN(analysisId)) {
         return res.status(400).json({ message: "Invalid analysis ID" });
@@ -134,10 +144,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
   
   // Generate PDF for an analysis
-  app.get("/api/analyses/:id/pdf", checkJwt, ensureUserInDb, async (req, res) => {
+  app.get("/api/analyses/:id/pdf", ensureAuthenticated, async (req, res) => {
     try {
       const analysisId = parseInt(req.params.id);
-      const user = (req as any).user;
+      const user = req.user;
       
       if (isNaN(analysisId)) {
         return res.status(400).json({ message: "Invalid analysis ID" });

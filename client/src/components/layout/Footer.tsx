@@ -9,33 +9,33 @@ const Footer: React.FC = () => {
         <nav className="-mx-5 -my-2 flex flex-wrap justify-center" aria-label="Footer">
           <div className="px-5 py-2">
             <Link href="/about">
-              <a className="text-base text-gray-500 hover:text-gray-900">
+              <div className="text-base text-gray-500 hover:text-gray-900 cursor-pointer">
                 About
-              </a>
+              </div>
             </Link>
           </div>
 
           <div className="px-5 py-2">
             <Link href="/privacy">
-              <a className="text-base text-gray-500 hover:text-gray-900">
+              <div className="text-base text-gray-500 hover:text-gray-900 cursor-pointer">
                 Privacy
-              </a>
+              </div>
             </Link>
           </div>
 
           <div className="px-5 py-2">
             <Link href="/terms">
-              <a className="text-base text-gray-500 hover:text-gray-900">
+              <div className="text-base text-gray-500 hover:text-gray-900 cursor-pointer">
                 Terms
-              </a>
+              </div>
             </Link>
           </div>
 
           <div className="px-5 py-2">
             <Link href="/contact">
-              <a className="text-base text-gray-500 hover:text-gray-900">
+              <div className="text-base text-gray-500 hover:text-gray-900 cursor-pointer">
                 Contact
-              </a>
+              </div>
             </Link>
           </div>
         </nav>

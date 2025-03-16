@@ -1,13 +1,14 @@
 import React from 'react';
-import { Link } from 'wouter';
-import { useAuth } from '@/components/auth/AuthProvider';
+import { Link, useLocation } from 'wouter';
+import { useAuth } from '@/hooks/use-auth';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { LogOut, User, HelpCircle, History } from 'lucide-react';
 
 const Navbar: React.FC = () => {
-  const { isAuthenticated, user, login, logout } = useAuth();
+  const { user, logoutMutation } = useAuth();
+  const [, setLocation] = useLocation();
 
   return (
     <nav className="bg-white shadow-sm">
@@ -19,35 +20,35 @@ const Navbar: React.FC = () => {
                 <span className="text-primary font-bold text-xl cursor-pointer">ChatInsight</span>
               </Link>
             </div>
-            {isAuthenticated && (
+            {user && (
               <div className="hidden sm:ml-6 sm:flex sm:space-x-8">
                 <Link href="/dashboard">
-                  <a className="border-primary text-gray-900 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
+                  <div className="border-primary text-gray-900 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium cursor-pointer">
                     Dashboard
-                  </a>
+                  </div>
                 </Link>
                 <Link href="/history">
-                  <a className="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
+                  <div className="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium cursor-pointer">
                     History
-                  </a>
+                  </div>
                 </Link>
                 <Link href="/help">
-                  <a className="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
+                  <div className="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium cursor-pointer">
                     Help
-                  </a>
+                  </div>
                 </Link>
               </div>
             )}
           </div>
           <div className="hidden sm:ml-6 sm:flex sm:items-center">
-            {isAuthenticated ? (
+            {user ? (
               <div className="flex items-center">
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
                     <Button variant="ghost" size="icon" className="relative rounded-full">
                       <Avatar className="h-8 w-8">
-                        <AvatarImage src={user?.picture} alt={user?.name || 'User'} />
-                        <AvatarFallback>{user?.name?.charAt(0) || 'U'}</AvatarFallback>
+                        <AvatarImage src="" alt={user.username || 'User'} />
+                        <AvatarFallback>{user.username?.charAt(0) || 'U'}</AvatarFallback>
                       </Avatar>
                     </Button>
                   </DropdownMenuTrigger>
@@ -60,7 +61,7 @@ const Navbar: React.FC = () => {
                       <History className="mr-2 h-4 w-4" />
                       <span>History</span>
                     </DropdownMenuItem>
-                    <DropdownMenuItem className="cursor-pointer" onClick={() => logout()}>
+                    <DropdownMenuItem className="cursor-pointer" onClick={() => logoutMutation.mutate()}>
                       <LogOut className="mr-2 h-4 w-4" />
                       <span>Logout</span>
                     </DropdownMenuItem>
@@ -69,7 +70,7 @@ const Navbar: React.FC = () => {
               </div>
             ) : (
               <Button 
-                onClick={() => login()} 
+                onClick={() => setLocation('/auth')} 
                 className="ml-6 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-primary hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary"
               >
                 Log in
