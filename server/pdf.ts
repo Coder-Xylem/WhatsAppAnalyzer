@@ -2,6 +2,7 @@ import PDFDocument from 'pdfkit';
 import { Sentiment, Participant, Topic, CommonWord } from "@shared/schema";
 import { createWriteStream } from 'fs';
 import { ChartJSNodeCanvas } from 'chartjs-node-canvas';
+import Chart from 'chart.js/auto';
 
 // Configure ChartJS for server-side rendering
 const width = 800;
