@@ -78,11 +78,15 @@ const Landing: React.FC = () => {
                   </Button>
                 </div>
                 <div className="ml-3 rounded-md shadow">
-                  <Link href="#features">
-                    <a className="w-full flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-primary bg-white hover:bg-gray-50 md:py-4 md:text-lg md:px-10">
-                      Learn more
-                    </a>
-                  </Link>
+                  <Button 
+                    onClick={() => {
+                      document.getElementById('features')?.scrollIntoView({ behavior: 'smooth' });
+                    }}
+                    variant="outline"
+                    className="w-full flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-primary bg-white hover:bg-gray-50 md:py-4 md:text-lg md:px-10"
+                  >
+                    Learn more
+                  </Button>
                 </div>
               </div>
             </div>
