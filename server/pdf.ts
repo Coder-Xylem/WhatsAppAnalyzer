@@ -3,6 +3,16 @@ import { Sentiment, Participant, Topic, CommonWord } from "@shared/schema";
 import { createWriteStream } from 'fs';
 import { ChartJSNodeCanvas } from 'chartjs-node-canvas';
 
+// Configure ChartJS for server-side rendering
+const width = 800;
+const height = 400;
+const chartCallback = (ChartJS) => {
+  ChartJS.defaults.responsive = true;
+  ChartJS.defaults.maintainAspectRatio = false;
+};
+
+const chartJSNodeCanvas = new ChartJSNodeCanvas({ width, height, chartCallback });
+
 interface AnalysisData {
   fileName: string;
   uploadDate: Date;
