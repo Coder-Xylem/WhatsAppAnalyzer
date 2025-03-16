@@ -3,26 +3,38 @@ import { users, type User, type InsertUser, analyses, type Analysis, type Insert
 export interface IStorage {
   // User methods
   getUser(id: number): Promise<User | undefined>;
-  getUserByAuth0Id(auth0Id: string): Promise<User | undefined>;
+  getUserByUsername(username: string): Promise<User | undefined>;
   createUser(user: InsertUser): Promise<User>;
   
   // Analysis methods
   getAnalysis(id: number): Promise<Analysis | undefined>;
   getAnalysesByUserId(userId: number): Promise<Analysis[]>;
   createAnalysis(analysis: InsertAnalysis): Promise<Analysis>;
+  
+  // Session store for express-session
+  sessionStore: any;
 }
+
+import createMemoryStore from "memorystore";
+import session from "express-session";
+
+const MemoryStore = createMemoryStore(session);
 
 export class MemStorage implements IStorage {
   private users: Map<number, User>;
   private analyses: Map<number, Analysis>;
   private userIdCounter: number;
   private analysisIdCounter: number;
+  public sessionStore: session.Store;
 
   constructor() {
     this.users = new Map();
     this.analyses = new Map();
     this.userIdCounter = 1;
     this.analysisIdCounter = 1;
+    this.sessionStore = new MemoryStore({
+      checkPeriod: 86400000 // prune expired entries every 24h
+    });
   }
 
   // User methods
@@ -30,15 +42,20 @@ export class MemStorage implements IStorage {
     return this.users.get(id);
   }
 
-  async getUserByAuth0Id(auth0Id: string): Promise<User | undefined> {
+  async getUserByUsername(username: string): Promise<User | undefined> {
     return Array.from(this.users.values()).find(
-      (user) => user.auth0Id === auth0Id,
+      (user) => user.username === username,
     );
   }
 
   async createUser(insertUser: InsertUser): Promise<User> {
     const id = this.userIdCounter++;
-    const user: User = { ...insertUser, id };
+    const user: User = { 
+      ...insertUser, 
+      id,
+      name: insertUser.name || null,
+      picture: insertUser.picture || null
+    };
     this.users.set(id, user);
     return user;
   }
@@ -56,7 +73,11 @@ export class MemStorage implements IStorage {
 
   async createAnalysis(insertAnalysis: InsertAnalysis): Promise<Analysis> {
     const id = this.analysisIdCounter++;
-    const analysis: Analysis = { ...insertAnalysis, id };
+    const analysis: Analysis = { 
+      ...insertAnalysis, 
+      id,
+      uploadDate: insertAnalysis.uploadDate || new Date()
+    };
     this.analyses.set(id, analysis);
     return analysis;
   }

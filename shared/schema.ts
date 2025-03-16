@@ -2,10 +2,11 @@ import { pgTable, text, serial, integer, boolean, timestamp, jsonb } from "drizz
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 
-// User model (Auth0 users)
+// User model with username and password
 export const users = pgTable("users", {
   id: serial("id").primaryKey(),
-  auth0Id: text("auth0_id").notNull().unique(),
+  username: text("username").notNull().unique(),
+  password: text("password").notNull(),
   email: text("email").notNull(),
   name: text("name"),
   picture: text("picture"),
