@@ -1,14 +1,14 @@
-import { createAuth0Client, Auth0Client, User } from '@auth0/auth0-spa-js';
+import { createAuth0Client, Auth0Client, User, CacheLocation } from '@auth0/auth0-spa-js';
 
 // Auth0 configuration
 const auth0Config = {
   domain: import.meta.env.VITE_AUTH0_DOMAIN || "dev-iciyt2qbbo0n5lki.us.auth0.com",
   clientId: import.meta.env.VITE_AUTH0_CLIENT_ID || "CRRdV4gp222Ek0c4CDzDRYgBxQu4ffYH",
   authorizationParams: {
-    redirect_uri: window.location.origin,
+    redirect_uri: `${window.location.origin}/callback`,
     audience: import.meta.env.VITE_AUTH0_AUDIENCE || "https://whatsapp-analyzer/api",
   },
-  cacheLocation: "localstorage",
+  cacheLocation: "localstorage" as CacheLocation,
 };
 
 // Auth0 client instance

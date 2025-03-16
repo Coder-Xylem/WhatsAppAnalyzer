@@ -1,10 +1,32 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/components/auth/AuthProvider';
 import { Link } from 'wouter';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
-import { MessageSquare, Users, FileText, Download } from 'lucide-react';
+import { 
+  MessageSquare, 
+  Users, 
+  FileText, 
+  Download, 
+  Smartphone,
+  FileBarChart,
+  HelpCircle,
+  ChevronRight
+} from 'lucide-react';
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger
+} from '@/components/ui/tabs';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle
+} from '@/components/ui/card';
 
 const Landing: React.FC = () => {
   const { login } = useAuth();
@@ -133,6 +155,133 @@ const Landing: React.FC = () => {
                     </div>
                   </dl>
                 </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        {/* How to Extract Chat Data Section */}
+        <div className="bg-gradient-to-b from-gray-50 to-white py-16 sm:py-24" id="how-to">
+          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+            <div className="text-center">
+              <h2 className="text-base font-semibold uppercase tracking-wide text-primary">Get Started</h2>
+              <p className="mt-1 text-4xl font-extrabold text-gray-900 sm:text-5xl sm:tracking-tight lg:text-5xl">
+                How to Export Your WhatsApp Chat
+              </p>
+              <p className="mx-auto mt-5 max-w-xl text-xl text-gray-500">
+                Follow these simple steps to extract chat data from your WhatsApp app
+              </p>
+            </div>
+            
+            <div className="mt-12">
+              <Tabs defaultValue="android" className="w-full">
+                <TabsList className="grid w-full max-w-md mx-auto grid-cols-2">
+                  <TabsTrigger value="android" className="flex items-center justify-center gap-2">
+                    <Smartphone className="h-4 w-4" />
+                    Android
+                  </TabsTrigger>
+                  <TabsTrigger value="iphone" className="flex items-center justify-center gap-2">
+                    <Smartphone className="h-4 w-4" />
+                    iPhone
+                  </TabsTrigger>
+                </TabsList>
+                
+                <div className="mt-8">
+                  <TabsContent value="android" className="rounded-lg">
+                    <Card>
+                      <CardHeader>
+                        <CardTitle>Export Chat from Android</CardTitle>
+                        <CardDescription>
+                          Follow these steps to export your WhatsApp chat on Android devices
+                        </CardDescription>
+                      </CardHeader>
+                      <CardContent>
+                        <ol className="space-y-4 list-decimal ml-4">
+                          <li className="flex items-start">
+                            <span className="font-medium text-gray-900 mr-2">Open WhatsApp:</span>
+                            <span className="text-gray-600">Open the WhatsApp application on your Android device.</span>
+                          </li>
+                          <li className="flex items-start">
+                            <span className="font-medium text-gray-900 mr-2">Open the Chat:</span>
+                            <span className="text-gray-600">Navigate to the chat you want to export.</span>
+                          </li>
+                          <li className="flex items-start">
+                            <span className="font-medium text-gray-900 mr-2">Access Chat Options:</span>
+                            <span className="text-gray-600">Tap the three dots in the top-right corner to open the menu.</span>
+                          </li>
+                          <li className="flex items-start">
+                            <span className="font-medium text-gray-900 mr-2">More Options:</span>
+                            <span className="text-gray-600">Select "More" from the dropdown menu.</span>
+                          </li>
+                          <li className="flex items-start">
+                            <span className="font-medium text-gray-900 mr-2">Export Chat:</span>
+                            <span className="text-gray-600">Tap on "Export chat". You'll be asked whether to include media files.</span>
+                          </li>
+                          <li className="flex items-start">
+                            <span className="font-medium text-gray-900 mr-2">Choose 'Without Media':</span>
+                            <span className="text-gray-600">Select "Without Media" to export only the text content.</span>
+                          </li>
+                          <li className="flex items-start">
+                            <span className="font-medium text-gray-900 mr-2">Save or Share:</span>
+                            <span className="text-gray-600">Save the .txt file to your device or share it directly.</span>
+                          </li>
+                        </ol>
+                      </CardContent>
+                    </Card>
+                  </TabsContent>
+                  
+                  <TabsContent value="iphone" className="rounded-lg">
+                    <Card>
+                      <CardHeader>
+                        <CardTitle>Export Chat from iPhone</CardTitle>
+                        <CardDescription>
+                          Follow these steps to export your WhatsApp chat on iOS devices
+                        </CardDescription>
+                      </CardHeader>
+                      <CardContent>
+                        <ol className="space-y-4 list-decimal ml-4">
+                          <li className="flex items-start">
+                            <span className="font-medium text-gray-900 mr-2">Open WhatsApp:</span>
+                            <span className="text-gray-600">Open the WhatsApp application on your iPhone.</span>
+                          </li>
+                          <li className="flex items-start">
+                            <span className="font-medium text-gray-900 mr-2">Open the Chat:</span>
+                            <span className="text-gray-600">Go to the chat you want to export.</span>
+                          </li>
+                          <li className="flex items-start">
+                            <span className="font-medium text-gray-900 mr-2">Access Chat Info:</span>
+                            <span className="text-gray-600">Tap on the contact name at the top of the chat to open chat info.</span>
+                          </li>
+                          <li className="flex items-start">
+                            <span className="font-medium text-gray-900 mr-2">Scroll Down:</span>
+                            <span className="text-gray-600">Scroll to the bottom of the chat info screen.</span>
+                          </li>
+                          <li className="flex items-start">
+                            <span className="font-medium text-gray-900 mr-2">Export Chat:</span>
+                            <span className="text-gray-600">Tap on "Export Chat".</span>
+                          </li>
+                          <li className="flex items-start">
+                            <span className="font-medium text-gray-900 mr-2">Choose 'Without Media':</span>
+                            <span className="text-gray-600">Select "Without Media" to export only text content.</span>
+                          </li>
+                          <li className="flex items-start">
+                            <span className="font-medium text-gray-900 mr-2">Share Options:</span>
+                            <span className="text-gray-600">Choose how you want to share or save the exported .txt file.</span>
+                          </li>
+                        </ol>
+                      </CardContent>
+                    </Card>
+                  </TabsContent>
+                </div>
+              </Tabs>
+              
+              <div className="mt-12 text-center">
+                <Button 
+                  onClick={() => login()} 
+                  className="inline-flex items-center px-6 py-3 text-base font-medium rounded-md shadow-sm text-white bg-primary hover:bg-blue-700"
+                >
+                  Start Analyzing <ChevronRight className="ml-2 h-5 w-5" />
+                </Button>
               </div>
             </div>
           </div>
