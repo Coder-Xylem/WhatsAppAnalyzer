@@ -2,19 +2,11 @@ import type { Express, Request, Response, NextFunction } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import multer from "multer";
-import { setupAuth } from "./auth";
+import { setupAuth, ensureAuthenticated } from "./auth";
 import { analyzeChat } from "./nlp";
 import { generatePDF } from "./pdf";
 import { insertAnalysisSchema } from "@shared/schema";
 import { z } from "zod";
-
-// Middleware to ensure user is authenticated
-function ensureAuthenticated(req: Request, res: Response, next: NextFunction) {
-  if (req.isAuthenticated()) {
-    return next();
-  }
-  res.status(401).json({ message: "Unauthorized" });
-}
 
 // Configure multer for memory storage
 const upload = multer({

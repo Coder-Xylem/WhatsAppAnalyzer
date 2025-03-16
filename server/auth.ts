@@ -1,15 +1,15 @@
 import passport from "passport";
 import { Strategy as LocalStrategy } from "passport-local";
-import { Express } from "express";
+import { Express, Request, Response, NextFunction } from "express";
 import session from "express-session";
 import { scrypt, randomBytes, timingSafeEqual } from "crypto";
 import { promisify } from "util";
 import { storage } from "./storage";
-import { User as SelectUser } from "@shared/schema";
+import { User as UserType } from "@shared/schema";
 
 declare global {
   namespace Express {
-    interface User extends SelectUser {}
+    interface User extends UserType {}
   }
 }
 
@@ -28,17 +28,26 @@ async function comparePasswords(supplied: string, stored: string) {
   return timingSafeEqual(hashedBuf, suppliedBuf);
 }
 
+export function ensureAuthenticated(req: Express.Request, res: Express.Response, next: Express.NextFunction) {
+  if (req.isAuthenticated()) {
+    return next();
+  }
+  res.status(401).json({ message: "Not authenticated" });
+}
+
 export function setupAuth(app: Express) {
   const sessionSettings: session.SessionOptions = {
-    secret: process.env.SESSION_SECRET || "chat-analyzer-secret-key",
+    secret: process.env.SESSION_SECRET || 'very-secret-key-for-development-only',
     resave: false,
     saveUninitialized: false,
-    store: storage.sessionStore,
     cookie: {
-      maxAge: 1000 * 60 * 60 * 24 // 24 hours
-    }
+      secure: process.env.NODE_ENV === 'production',
+      maxAge: 24 * 60 * 60 * 1000, // 24 hours
+    },
+    store: storage.sessionStore,
   };
 
+  app.set("trust proxy", 1);
   app.use(session(sessionSettings));
   app.use(passport.initialize());
   app.use(passport.session());
@@ -82,9 +91,7 @@ export function setupAuth(app: Express) {
 
       req.login(user, (err) => {
         if (err) return next(err);
-        const userWithoutPassword = { ...user };
-        delete (userWithoutPassword as any).password;
-        res.status(201).json(userWithoutPassword);
+        res.status(201).json(user);
       });
     } catch (error) {
       next(error);
@@ -96,11 +103,9 @@ export function setupAuth(app: Express) {
       if (err) return next(err);
       if (!user) return res.status(401).json({ message: "Invalid credentials" });
       
-      req.login(user, (err) => {
-        if (err) return next(err);
-        const userWithoutPassword = { ...user };
-        delete (userWithoutPassword as any).password;
-        res.status(200).json(userWithoutPassword);
+      req.login(user, (loginErr) => {
+        if (loginErr) return next(loginErr);
+        return res.status(200).json(user);
       });
     })(req, res, next);
   });
@@ -114,8 +119,6 @@ export function setupAuth(app: Express) {
 
   app.get("/api/user", (req, res) => {
     if (!req.isAuthenticated()) return res.status(401).json({ message: "Not authenticated" });
-    const userWithoutPassword = { ...req.user };
-    delete (userWithoutPassword as any).password;
-    res.json(userWithoutPassword);
+    res.json(req.user);
   });
 }
