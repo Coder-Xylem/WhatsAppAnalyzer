@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useAuth } from '@/components/auth/AuthProvider';
+import { useAuth } from '../hooks/use-auth';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
 import FileUpload from '@/components/dashboard/FileUpload';
@@ -9,7 +9,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Loader2 } from 'lucide-react';
 
 const Dashboard: React.FC = () => {
-  const { isAuthenticated, user } = useAuth();
+  const { user } = useAuth();
   const [analysisData, setAnalysisData] = useState<Analysis | null>(null);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
 
@@ -23,7 +23,7 @@ const Dashboard: React.FC = () => {
     setAnalysisData(data);
   };
 
-  if (!isAuthenticated) {
+  if (!user) {
     return (
       <div className="flex flex-col min-h-screen">
         <Navbar />
