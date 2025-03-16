@@ -53,7 +53,7 @@ const Navbar: React.FC = () => {
                     </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end">
-                    <DropdownMenuItem className="cursor-pointer">
+                    <DropdownMenuItem onClick={() => setLocation('/profile')}>
                       <User className="mr-2 h-4 w-4" />
                       <span>Profile</span>
                     </DropdownMenuItem>
@@ -61,7 +61,7 @@ const Navbar: React.FC = () => {
                       <History className="mr-2 h-4 w-4" />
                       <span>History</span>
                     </DropdownMenuItem>
-                    <DropdownMenuItem className="cursor-pointer" onClick={() => logoutMutation.mutate()}>
+                    <DropdownMenuItem onClick={() => logoutMutation.mutate()}>
                       <LogOut className="mr-2 h-4 w-4" />
                       <span>Logout</span>
                     </DropdownMenuItem>
