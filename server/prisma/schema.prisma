@@ -1,0 +1,28 @@
+datasource db {
+  provider = "mongodb"
+  url      = "mongodb+srv://userofinternet508:RkdRhPCQIGgr9hZb@cluster0.9tinp.mongodb.net/whatsapp_analyzer"
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id        String     @id @default(auto()) @map("_id") @db.ObjectId
+  username  String     @unique
+  email     String     @unique
+  password  String
+  analyses  Analysis[]
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+}
+
+model Analysis {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  userId    String   @db.ObjectId
+  user      User     @relation(fields: [userId], references: [id])
+  filePath  String
+  results   Json
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+} 

@@ -1,21 +1,10 @@
-// Auth0 related types
-export interface Auth0User {
-  sub: string;
-  nickname: string;
-  name: string;
-  picture: string;
-  updated_at: string;
-  email: string;
-  email_verified: boolean;
-}
-
 // Analysis related types
 export interface User {
-  id: number;
-  auth0Id: string;
+  id: string;
+  username: string;
   email: string;
-  name?: string;
-  picture?: string;
+  createdAt: string;
+  updatedAt: string;
 }
 
 export interface ParticipantSentiment {
@@ -27,9 +16,12 @@ export interface ParticipantSentiment {
 
 export interface Participant {
   name: string;
-  messages: number;
-  words: number;
-  sentiment: ParticipantSentiment;
+  messageCount: number;
+  wordCount: number;
+  percentage: number;
+  sentiment: {
+    overall: string;
+  };
 }
 
 export interface SentimentTimelineEntry {
@@ -43,7 +35,23 @@ export interface Sentiment {
   positive: number;
   negative: number;
   neutral: number;
-  timeline: SentimentTimelineEntry[];
+  timeline: Array<{
+    date: string;
+    positive: number;
+    negative: number;
+    neutral: number;
+  }>;
+}
+
+export interface TimeAnalysis {
+  hourlyActivity: number[];
+  dailyActivity: number[];
+  totalDays: number;
+}
+
+export interface TopWord {
+  word: string;
+  count: number;
 }
 
 export interface Topic {
@@ -57,22 +65,24 @@ export interface CommonWord {
 }
 
 export interface Analysis {
-  id: number;
-  userId: number;
-  fileName: string;
-  fileSize: number;
-  uploadDate: string;
-  totalMessages: number;
-  participants: Participant[];
+  id: string;
+  messageCount: number;
   sentiment: Sentiment;
+  participants: Participant[];
   topics: Topic;
-  commonWords: CommonWord[];
+  topWords: CommonWord[];
 }
 
 export interface AnalysisSummary {
-  id: number;
-  fileName: string;
-  fileSize: number;
-  uploadDate: string;
-  totalMessages: number;
+  id: string;
+  title: string;
+  description: string;
+  createdAt: string;
+  messageCount: number;
+  participantCount: number;
+}
+
+export interface ApiError {
+  message: string;
+  status: number;
 }

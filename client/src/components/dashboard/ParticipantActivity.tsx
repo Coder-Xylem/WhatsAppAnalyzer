@@ -70,12 +70,12 @@ const ParticipantActivity: React.FC<ParticipantActivityProps> = ({ participants 
       if (ctx) {
         // Sort participants by number of messages (descending) and take top 15
         const topParticipants = [...participants]
-          .sort((a, b) => b.messages - a.messages)
+          .sort((a, b) => b.messageCount - a.messageCount)
           .slice(0, 15);
 
         // Prepare data for the chart
         const labels = topParticipants.map(p => p.name);
-        const messageData = topParticipants.map(p => p.messages);
+        const messageData = topParticipants.map(p => p.messageCount);
         const backgroundColors = topParticipants.map(p => getColorFromName(p.name));
         const borderColors = backgroundColors.map(color => color.replace('0.8', '1'));
 
@@ -134,7 +134,7 @@ const ParticipantActivity: React.FC<ParticipantActivityProps> = ({ participants 
           <CardTitle>Participant Activity</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="h-[300px]">
+          <div className="h-[550px]">
             <canvas ref={chartRef} />
           </div>
         </CardContent>
@@ -164,7 +164,7 @@ const ParticipantActivity: React.FC<ParticipantActivityProps> = ({ participants 
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
-                {participants.map((participant, index) => (
+                {participants?.map((participant, index) => (
                   <tr key={index}>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="flex items-center">
@@ -181,14 +181,14 @@ const ParticipantActivity: React.FC<ParticipantActivityProps> = ({ participants 
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm text-gray-900">{participant.messages.toLocaleString()}</div>
+                      <div className="text-sm text-gray-900">{participant.messageCount?.toLocaleString() || 0}</div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm text-gray-900">{participant.words.toLocaleString()}</div>
+                      <div className="text-sm text-gray-900">{participant.wordCount?.toLocaleString() || 0}</div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${getSentimentBadgeColor(participant.sentiment.overall)}`}>
-                        {participant.sentiment.overall.charAt(0).toUpperCase() + participant.sentiment.overall.slice(1)}
+                      <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${getSentimentBadgeColor(participant.sentiment?.overall || 'neutral')}`}>
+                        {(participant.sentiment?.overall || 'Neutral').charAt(0).toUpperCase() + (participant.sentiment?.overall || 'neutral').slice(1)}
                       </span>
                     </td>
                   </tr>

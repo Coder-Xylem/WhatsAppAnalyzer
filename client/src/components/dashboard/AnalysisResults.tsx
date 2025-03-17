@@ -7,16 +7,14 @@ import { Analysis } from '@/types';
 import ParticipantActivity from './ParticipantActivity';
 import SentimentAnalysis from './SentimentAnalysis';
 import TopicAnalysis from './TopicAnalysis';
-import { downloadPdfReport } from '@/lib/api';
+// import { downloadPdfReport } from '@/lib/api';
 
 interface AnalysisResultsProps {
   analysis: Analysis;
 }
 
 const AnalysisResults: React.FC<AnalysisResultsProps> = ({ analysis }) => {
-  const handleDownloadPdf = () => {
-    downloadPdfReport(analysis.id);
-  };
+  
 
   return (
     <div className="space-y-6">
@@ -28,10 +26,6 @@ const AnalysisResults: React.FC<AnalysisResultsProps> = ({ analysis }) => {
               Insights from your WhatsApp chat data
             </CardDescription>
           </div>
-          <Button onClick={handleDownloadPdf} className="flex items-center gap-2">
-            <Download className="h-4 w-4" />
-            Download PDF
-          </Button>
         </CardHeader>
         <CardContent>
           <h3 className="text-lg font-medium text-gray-900 mb-4">Summary</h3>
@@ -49,7 +43,7 @@ const AnalysisResults: React.FC<AnalysisResultsProps> = ({ analysis }) => {
                       </dt>
                       <dd className="flex items-baseline">
                         <div className="text-2xl font-semibold text-gray-900">
-                          {analysis.totalMessages.toLocaleString()}
+                          {analysis.messageCount.toLocaleString()}
                         </div>
                       </dd>
                     </dl>
@@ -71,7 +65,7 @@ const AnalysisResults: React.FC<AnalysisResultsProps> = ({ analysis }) => {
                       </dt>
                       <dd className="flex items-baseline">
                         <div className="text-2xl font-semibold text-gray-900">
-                          {analysis.sentiment.positive}%
+                          {analysis.sentiment.positive.toFixed(1)}%
                         </div>
                       </dd>
                     </dl>
@@ -93,7 +87,7 @@ const AnalysisResults: React.FC<AnalysisResultsProps> = ({ analysis }) => {
                       </dt>
                       <dd className="flex items-baseline">
                         <div className="text-2xl font-semibold text-gray-900">
-                          {analysis.sentiment.negative}%
+                          {analysis.sentiment.negative.toFixed(1)}%
                         </div>
                       </dd>
                     </dl>
@@ -115,7 +109,7 @@ const AnalysisResults: React.FC<AnalysisResultsProps> = ({ analysis }) => {
                       </dt>
                       <dd className="flex items-baseline">
                         <div className="text-2xl font-semibold text-gray-900">
-                          {analysis.sentiment.neutral}%
+                          {analysis.sentiment.neutral.toFixed(1)}%
                         </div>
                       </dd>
                     </dl>
@@ -128,10 +122,10 @@ const AnalysisResults: React.FC<AnalysisResultsProps> = ({ analysis }) => {
       </Card>
 
       <Tabs defaultValue="participants" className="w-full">
-        <TabsList className="grid w-full grid-cols-3">
+        <TabsList className="grid w-full grid-cols-2">
           <TabsTrigger value="participants">Participant Activity</TabsTrigger>
           <TabsTrigger value="sentiment">Sentiment Analysis</TabsTrigger>
-          <TabsTrigger value="topics">Topic Analysis</TabsTrigger>
+          {/* <TabsTrigger value="topics">Topic Analysis</TabsTrigger> */}
         </TabsList>
         <TabsContent value="participants" className="mt-6">
           <ParticipantActivity participants={analysis.participants} />
@@ -140,7 +134,7 @@ const AnalysisResults: React.FC<AnalysisResultsProps> = ({ analysis }) => {
           <SentimentAnalysis sentiment={analysis.sentiment} />
         </TabsContent>
         <TabsContent value="topics" className="mt-6">
-          <TopicAnalysis topics={analysis.topics} commonWords={analysis.commonWords} />
+          <TopicAnalysis topics={analysis.topics} commonWords={analysis.topWords} />
         </TabsContent>
       </Tabs>
     </div>

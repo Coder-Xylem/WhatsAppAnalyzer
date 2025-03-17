@@ -5,9 +5,10 @@ import { Progress } from '@/components/ui/progress';
 import { useToast } from '@/hooks/use-toast';
 import { Upload, X, FileText } from 'lucide-react';
 import { uploadAndAnalyzeChat } from '@/lib/api';
+import { Analysis } from '@/types';
 
 interface FileUploadProps {
-  onAnalysisComplete: (analysisData: any) => void;
+  onAnalysisComplete: (analysisData: Analysis) => void;
   onAnalysisStart: () => void;
 }
 

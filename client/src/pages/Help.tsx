@@ -1,6 +1,5 @@
-
 import React from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -21,7 +20,10 @@ const Help: React.FC = () => {
 
       <Card>
         <CardHeader>
-          <CardTitle>Frequently Asked Questions</CardTitle>
+          <CardTitle>Help & FAQ</CardTitle>
+          <CardDescription>
+            Frequently asked questions about using WhatsApp Chat Analyzer
+          </CardDescription>
         </CardHeader>
         <CardContent>
           <Accordion type="single" collapsible>
@@ -40,9 +42,9 @@ const Help: React.FC = () => {
             </AccordionItem>
 
             <AccordionItem value="item-3">
-              <AccordionTrigger>Can I download my analysis results?</AccordionTrigger>
+              <AccordionTrigger>Can I view my past analyses?</AccordionTrigger>
               <AccordionContent>
-                Yes, you can download a detailed PDF report of your analysis from the dashboard after processing is complete.
+                Yes, you can view your analysis history and results from the dashboard at any time.
               </AccordionContent>
             </AccordionItem>
 

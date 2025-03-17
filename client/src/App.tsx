@@ -1,41 +1,32 @@
-import React from 'react';
-import { Switch, Route } from 'wouter';
-import { queryClient } from './lib/queryClient';
-import { QueryClientProvider } from '@tanstack/react-query';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Toaster } from '@/components/ui/toaster';
-import { AuthProvider } from './hooks/use-auth';
-import NotFound from '@/pages/not-found';
+import { Route, Router } from 'wouter';
 import Landing from '@/pages/Landing';
 import Dashboard from '@/pages/Dashboard';
-import AuthPage from '@/pages/auth-page';
 import History from '@/pages/History';
 import Help from '@/pages/Help';
-import Profile from '@/pages/Profile';
-import { ProtectedRoute } from './lib/protected-route';
+import NotFound from '@/pages/NotFound';
 
-function Router() {
-  return (
-    <Switch>
-      <Route path="/" component={Landing} />
-      <ProtectedRoute path="/dashboard" component={Dashboard} />
-      <ProtectedRoute path="/history" component={History} />
-      <Route path="/help" component={Help} />
-      <Route path="/profile" component={Profile} />
-      <Route path="/auth" component={AuthPage} />
-      <Route component={NotFound} />
-    </Switch>
-  );
-}
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      retry: 1,
+      refetchOnWindowFocus: false,
+    },
+  },
+});
 
-function App() {
+export default function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <AuthProvider>
-        <Router />
-        <Toaster />
-      </AuthProvider>
+      <Router>
+        <Route path="/" component={() => <Landing />} />
+        <Route path="/dashboard" component={() => <Dashboard />} />
+        <Route path="/history" component={() => <History />} />
+        <Route path="/help" component={() => <Help />} />
+        {/* <Route component={() => <NotFound />} /> */}
+      </Router>
+      <Toaster />
     </QueryClientProvider>
   );
 }
-
-export default App;

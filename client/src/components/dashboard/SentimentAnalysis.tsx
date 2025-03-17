@@ -18,7 +18,7 @@ const SentimentAnalysis: React.FC<SentimentAnalysisProps> = ({ sentiment }) => {
 
   useEffect(() => {
     // Initialize timeline chart
-    if (timelineChartRef.current) {
+    if (timelineChartRef.current && sentiment.timeline?.length > 0) {
       // Destroy previous chart if it exists
       if (timelineChartInstance.current) {
         timelineChartInstance.current.destroy();
@@ -27,11 +27,11 @@ const SentimentAnalysis: React.FC<SentimentAnalysisProps> = ({ sentiment }) => {
       const ctx = timelineChartRef.current.getContext('2d');
       
       if (ctx) {
-        // Parse the timeline data
-        const labels = sentiment.timeline.map(t => t.date);
-        const positiveData = sentiment.timeline.map(t => t.positive);
-        const negativeData = sentiment.timeline.map(t => t.negative);
-        const neutralData = sentiment.timeline.map(t => t.neutral);
+        // Parse the timeline data with null checks
+        const labels = sentiment.timeline?.map(t => t.date) || [];
+        const positiveData = sentiment.timeline?.map(t => t.positive) || [];
+        const negativeData = sentiment.timeline?.map(t => t.negative) || [];
+        const neutralData = sentiment.timeline?.map(t => t.neutral) || [];
         
         // Create new chart
         timelineChartInstance.current = new Chart(ctx, {
@@ -142,37 +142,39 @@ const SentimentAnalysis: React.FC<SentimentAnalysisProps> = ({ sentiment }) => {
 
   return (
     <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
-      <Card>
-        <CardHeader>
-          <CardTitle>Sentiment Timeline</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="h-[250px]">
-            <canvas ref={timelineChartRef} />
-          </div>
-        </CardContent>
-      </Card>
+      {sentiment.timeline?.length > 0 && (
+        <Card>
+          <CardHeader>
+            <CardTitle>Sentiment Timeline</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="h-[250px]">
+              <canvas ref={timelineChartRef} />
+            </div>
+          </CardContent>
+        </Card>
+      )}
       
       <Card>
         <CardHeader>
           <CardTitle>Sentiment Distribution</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="h-[250px]">
+          <div className="h-[530px] w-full flex items-center justify-center">
             <canvas ref={distributionChartRef} />
           </div>
           <div className="mt-4 grid grid-cols-3 gap-2 text-center">
             <div className="rounded-lg bg-green-50 p-2">
               <span className="text-xs font-medium text-green-800">Positive</span>
-              <p className="text-xl font-bold text-green-600">{sentiment.positive}%</p>
+              <p className="text-xl font-bold text-green-600">{sentiment.positive?.toFixed(1) || 0}%</p>
             </div>
             <div className="rounded-lg bg-red-50 p-2">
               <span className="text-xs font-medium text-red-800">Negative</span>
-              <p className="text-xl font-bold text-red-600">{sentiment.negative}%</p>
+              <p className="text-xl font-bold text-red-600">{sentiment.negative?.toFixed(1) || 0}%</p>
             </div>
             <div className="rounded-lg bg-yellow-50 p-2">
               <span className="text-xs font-medium text-yellow-800">Neutral</span>
-              <p className="text-xl font-bold text-yellow-600">{sentiment.neutral}%</p>
+              <p className="text-xl font-bold text-yellow-600">{sentiment.neutral?.toFixed(1) || 0}%</p>
             </div>
           </div>
         </CardContent>
